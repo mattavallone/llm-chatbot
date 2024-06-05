@@ -20,11 +20,6 @@ def initialize_model():
 def index():
     return render_template('index.html')
 
-@app.route('/send_dummy_message', methods=['POST'])
-def send_message():
-    message = request.json['message']
-    return jsonify({"response": "I received your message: " + message})
-
 @app.route('/send_message', methods=['POST'])
 def send_message():
 	# recieve message from the user

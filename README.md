@@ -1,5 +1,4 @@
 # LLM Chatbot Web App
-Web-based chatbot powered by . Requires NVIDIA GPU and driver support.
 
 ## Description
 LLM Chatbot is a web-based application that utilizes the StableBeluga model [stabilityai/StableBeluga-7B](https://huggingface.co/stabilityai/StableBeluga-7B) from Hugging Face's Transformers library to provide conversational responses to user input. The chatbot assists users by answering questions, engaging in dialogue, and providing assistance based on the prompts it receives.

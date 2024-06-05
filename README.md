@@ -22,11 +22,11 @@ https://github.com/mattavallone/llm-chatbot/assets/17806421/5b15435e-2c6e-426b-a
 5. The user can continue the conversation by sending more messages.
 
 ## Installation
-1. Clone the repository from GitHub: `git clone https://github.com/username/llm-chatbot.git`
+1. Clone the repository from GitHub: `git clone https://github.com/mattavallone/llm-chatbot.git`
 2. Navigate to the project directory: `cd llm-chatbot`
 3. Install the required dependencies: `pip install -r requirements.txt`
 4. Set up the environment variables, including the Hugging Face token, in a `.env` file.
-5. Run the Flask application: `python app.py`
+5. Run the Flask application: `python3 app.py`
 6. Access the application in a web browser at `http://localhost:5000`.
 
 ## Dependencies

@@ -28,6 +28,16 @@ def generate_response(task_id, message):
     inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
     output = llm.generate(**inputs, do_sample=True, top_p=0.95, top_k=0, max_new_tokens=256)
     answer = tokenizer.decode(output[0], skip_special_tokens=True).split('### Assistant:\n ')[1]
+    
+    if len(answer) > 1000:
+        truncated_answer = answer[:1000]
+        # Find the last sentence-ending punctuation in the truncated part
+        last_punctuation_index = max(truncated_answer.rfind('.'), truncated_answer.rfind('!'), truncated_answer.rfind('?'))
+        if last_punctuation_index != -1:
+            answer = truncated_answer[:last_punctuation_index + 1]
+        else:
+            answer = truncated_answer  # Fall back to simple truncation if no punctuation is found
+    
     responses[task_id] = answer
 
 @app.route('/send_message', methods=['POST'])
@@ -65,7 +75,7 @@ if __name__ == "__main__":
 	HF_TOKEN = os.getenv('HF_TOKEN')
 
 	# initialize models
-	system_prompt = "### System:\nYou are StableBeluga, an AI that follows instructions extremely well. Help as much as you can. Limit responses to 1000 characters or less. Remember, be safe, and don't do anything illegal.\n\n"
+	system_prompt = "### System:\nYou are StableBeluga, an AI that follows instructions extremely well. Help as much as you can. Remember, be safe, and don't do anything illegal.\n\n"
 	tokenizer = initialize_tokenizer()
 	llm = initialize_model()
 

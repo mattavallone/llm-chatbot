@@ -65,7 +65,7 @@ if __name__ == "__main__":
 	HF_TOKEN = os.getenv('HF_TOKEN')
 
 	# initialize models
-	system_prompt = "### System:\nYou are StableBeluga, an AI that follows instructions extremely well. Help as much as you can. Remember, be safe, and don't do anything illegal.\n\n"
+	system_prompt = "### System:\nYou are StableBeluga, an AI that follows instructions extremely well. Help as much as you can. Limit responses to 1000 characters or less. Remember, be safe, and don't do anything illegal.\n\n"
 	tokenizer = initialize_tokenizer()
 	llm = initialize_model()
 

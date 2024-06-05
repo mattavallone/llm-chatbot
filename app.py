@@ -1,10 +1,13 @@
 from flask import Flask, jsonify, render_template, request, json
 import os
+import threading
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from dotenv import load_dotenv
 
 app = Flask(__name__)
+
+responses = {}
 
 def initialize_tokenizer():
 	tk = AutoTokenizer.from_pretrained("stabilityai/StableBeluga-7B", use_fast=False)
@@ -20,25 +23,40 @@ def initialize_model():
 def index():
     return render_template('index.html')
 
+def generate_response(task_id, message):
+    prompt = f"{system_prompt}### User: {message}\n\n### Assistant:\n"
+    inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+    output = llm.generate(**inputs, do_sample=True, top_p=0.95, top_k=0, max_new_tokens=256)
+    answer = tokenizer.decode(output[0], skip_special_tokens=True).split('### Assistant:\n ')[1]
+    responses[task_id] = answer
+
 @app.route('/send_message', methods=['POST'])
 def send_message():
-	# recieve message from the user
-	data = request.get_json()
+    data = request.get_json()
 
-	# ensure message is converted to json if it was recieved as str
-	if isinstance(data, str):
-		data = json.loads(data)
-	
-	# extract text of the message
-	message = data['message']
-	prompt = f"{system_prompt}### User: {message}\n\n### Assistant:\n"
-	inputs = tokenizer(prompt, return_tensors="pt")
-	output = llm.generate(**inputs, do_sample=True, top_p=0.95, top_k=0, max_new_tokens=256)
+    if isinstance(data, str):
+        data = json.loads(data)
 
-	# invoke beluga llm
-	response = {'message': tokenizer.decode(output[0], skip_special_tokens=True)}
-	
-	return jsonify(response)
+    message = data['message']
+    task_id = str(len(responses))  # Simple unique task_id generation
+    threading.Thread(target=generate_response, args=(task_id, message)).start()
+    
+    return jsonify({'task_id': task_id})
+
+@app.route('/get_response/<task_id>', methods=['GET'])
+def get_response(task_id):
+    if task_id in responses:
+        response = {
+            'state': 'SUCCESS',
+            'result': responses[task_id]
+        }
+    else:
+        response = {
+            'state': 'PENDING',
+            'status': 'Pending...'
+        }
+
+    return jsonify(response)
 
 
 if __name__ == "__main__":

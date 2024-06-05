@@ -14,8 +14,9 @@
         <div class="chat-input">
             <input type="text" id="message-input" placeholder="Type your message...">
             <button onclick="sendMessage()">Send</button>
-            <button class="clear-chat" onclick="clearChat()">Clear Chat</button>
+            <button class="clear-chat">Clear</button>
         </div>
+        <div id="throbber" class="throbber" style="display: none;"></div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
